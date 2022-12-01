@@ -1,5 +1,4 @@
-# transformer-based-fall-detection
-Transformer-based Fall Detection in Videos
+# Transformer-based Fall Detection in Videos
 
 ## Configuration files
 
@@ -23,6 +22,14 @@ The code expects the UP-Fall dataset format, i.e.
 ```
 
 The folder containing this tree structure is declared in the configuration file using the option `dataset_folder`.
+
+## Running the code
+
+Modify `main.py` to include the desired configuration file (`config_eval1.yaml` by default) in line 21. Then call:
+
+```
+python main.py
+```
 
 ## Citation
 
