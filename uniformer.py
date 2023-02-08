@@ -376,7 +376,17 @@ def uniformer_small():
         depth=[3, 4, 8, 3], embed_dim=[64, 128, 320, 512], 
         head_dim=64, drop_rate=0.1)
 
+def uniformer_small600():
+    return Uniformer(
+        depth=[3, 4, 8, 3], embed_dim=[64, 128, 320, 512], 
+        head_dim=64, drop_rate=0.1, num_classes=600)
+
 def uniformer_base():
     return Uniformer(
         depth=[5, 8, 20, 7], embed_dim=[64, 128, 320, 512], 
         head_dim=64, drop_rate=0.3)
+
+def uniformer_base600():
+    return Uniformer(
+        depth=[5, 8, 20, 7], embed_dim=[64, 128, 320, 512], 
+        head_dim=64, drop_rate=0.3, num_classes=600)

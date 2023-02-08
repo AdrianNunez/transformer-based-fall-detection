@@ -1,12 +1,12 @@
+import time
 import torch
 import datasets
 import numpy as np
 import matplotlib.pyplot as plt
-from time import time
 from tqdm import tqdm
 from torch.optim import AdamW
 from torch.nn import functional as F
-from uniformer import uniformer_small, uniformer_base
+from uniformer import *
 from huggingface_hub import hf_hub_download
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 
@@ -45,10 +45,19 @@ class VideoTransformer(torch.nn.Module):
             if self.use_cuda:
                 class_weights = class_weights.cuda()
 
+        #self.model = uniformer_small600()
+        #self.model = uniformer_base600()
+        #self.model = uniformer_small()
         self.model = uniformer_base()
+
         # load state
-        #model_path = hf_hub_download(repo_id="Sense-X/uniformer_video", filename="uniformer_small_k400_16x8.pth")
-        model_path = hf_hub_download(repo_id="Sense-X/uniformer_video", filename="uniformer_base_k400_16x8.pth")
+        model_path = hf_hub_download(repo_id="Sense-X/uniformer_video", filename="uniformer_small_k400_16x8.pth") # Small400 W16
+        #model_path = 'uniformer_small_k600_16x8.pth' # Small600 W16
+        #model_path = 'uniformer_small_k400_8x8.pth' # Small400 W8
+
+        #model_path = 'uniformer_base_k400_16x8.pth' # Baseline400 W16
+        #model_path = 'uniformer_base_k600_16x8.pth' # Baseline600 W16
+        #model_path = 'uniformer_base_k400_8x8.pth' # Baseline400 W8
         state_dict = torch.load(model_path, map_location='cpu')
         self.model.load_state_dict(state_dict)
         self.model.embed_dim = 512
@@ -137,6 +146,7 @@ class VideoTransformer(torch.nn.Module):
             self.evaluate(dev_dataloader)
         best_f1_score = 0.
         loss_history = []
+        start_time = time.time()
         for e in range(epochs):
             epoch_loss_history = self.train_1_epoch(train_dataloader)
             loss_history.extend(epoch_loss_history)
@@ -152,7 +162,8 @@ class VideoTransformer(torch.nn.Module):
                     else:
                         patience = patience - 1
         save_loss_history(loss_history)
-                
+        total_time = (time.time()-start_time) / 60.
+        print('Training duration: {:.2f} minutes, {:.2f} hours'.format(total_time, total_time/60.))
 
     def test(self, config, dataset):
         self.model.eval()
@@ -233,13 +244,13 @@ class VideoTransformer(torch.nn.Module):
                     if int(batch["label"][i,j]) != -1:
                         predictions.append(class_preds[j])
                         references.append(int(batch["label"][i,j].numpy()))
-                batch_TP, batch_TN, batch_FN, batch_FP = compute_metrics(
+                """ batch_TP, batch_TN, batch_FN, batch_FP = compute_metrics(
                     class_preds, batch["label"][i,:], config
                 )
                 TP += batch_TP
                 TN += batch_TN
                 FN += batch_FN
-                FP += batch_FP
+                FP += batch_FP """
         print('TEST Average loss (by clip): {:.2f}'.format(np.mean(loss_history)))
         generate_confusion_matrix(config, predictions, references)
         predictions = np.asarray(predictions)
