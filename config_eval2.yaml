@@ -1,0 +1,35 @@
+use_cuda: true
+binarise: true
+dataset_folder: UPFall/
+labels_file: CompleteDataSet.csv
+cm_save_path: cm.pdf
+model_save_path: model_state2.pt
+competition_split: false
+epochs: 100
+learning_rate: 0.00005
+batch_size_train: 16
+batch_size_dev: 32
+batch_size_test: 7
+window_size: 8
+weight_decay: 0.00001
+patience: 10
+class_weights: [1,2]
+oversample: true
+undersample: false
+weighted_sampler: false
+fall_classes: [1,2,3,4,5]
+train_subjects: [1,3,4,7,10,11,12,13,14]
+dev_subjects: [1,3,4]
+test_subjects: [15,16,17]
+class_names:
+  - Fall fwd hands
+  - fall fwd knees
+  - Fall bwd
+  - Fall swd
+  - Fall chair
+  - Walking
+  - Standing
+  - Sitting
+  - Picking
+  - Jumping
+  - Laying
